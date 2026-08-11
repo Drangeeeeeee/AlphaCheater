@@ -3,6 +3,7 @@
 # accident.
 /*
 !/.gitignore
+!/LICENSE
 !/Readme.md
 !/requirements.txt
 !/AlphaCheater/
