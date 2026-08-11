@@ -1,0 +1,31 @@
+# Python and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# macOS and local editor state
+.DS_Store
+.obsidian/
+
+# Input fixtures, archived prototypes, and rendered video production files
+Test/
+留档/
+media/
+Manim/
+未命名文件夹/
+
+# Video/audio inputs and generated exports must not enter the source repository.
+*.mov
+*.mp4
+*.mkv
+*.webm
+*.avi
+*.m4v
+*.wav
+*.mp3
+*.aac
+*.m4a
