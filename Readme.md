@@ -57,3 +57,19 @@ C_out = C_fg * alpha + C_bg * (1 - alpha)
 - Straight / Premultiplied Alpha 通常无法仅凭容器或编码名称可靠判定。程序只在元数据有明确信号时提示推测结果。
 - 输入和输出的兼容性由编码、像素格式、封装格式和播放软件共同决定；QuickTime Player 能否播放不是 FFmpeg 能否处理该文件的判据。
 - 输出会清除源文件的全局容器元数据，避免复制标题、作者或位置等信息；有效的色彩参数仍会按输入视频流显式写入。
+
+## 相关项目
+
+- [ChronoVolume](https://github.com/Drangeeeeeee/ChronoVolume)：可导入 `A_color + B_alpha` 双视频，并将其作为带透明度的时间体进行审查、切片、渲染与导出。
+
+## 赞助与商业支持
+
+如果 AlphaCheater 为你的个人创作、研究工作或商业产品创造了价值，欢迎自愿赞助本项目，支持后续维护、格式兼容、编码流程优化和文档完善。
+
+赞助完全自愿，不是使用、修改或分发 AlphaCheater 的条件，也不会改变 MIT License 已授予的任何权利。即使不赞助，你仍然可以继续按照 MIT License 使用本项目。
+
+如果企业需要定制功能、制作管线集成、特定格式支持、自动化处理或技术咨询，也欢迎通过 GitHub 与作者联系并单独协商。
+
+## License
+
+AlphaCheater 使用 MIT License，详见 [LICENSE](LICENSE)。
