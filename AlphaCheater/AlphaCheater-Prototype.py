@@ -1,46 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-alpha_splitter_gui_v2.py
+"""Split an RGBA video into A_color RGB and B_alpha grayscale streams.
 
-纯拆分版 Alpha 视频工具。
-
-功能：
-  导入一个带 Alpha 通道的视频，导出：
-    A：不带 Alpha 的颜色视频
-    B：表示 Alpha 的灰度视频，黑=透明，白=不透明
-
-保留内容：
-  - A 颜色视频编码选项
-  - B Alpha 灰度视频编码选项
-  - 自动推荐输出后缀
-  - 输入视频信息查看
-  - FFmpeg 日志
-  - AE 兼容性提醒
-
-已删除内容：
-  - 所有用途预设
-  - 强制 BT.709 复选框
-
-去掉内容：
-  - 图层列表
-  - 多图层预览
-  - 播放/暂停
-  - OpenCV 合成逻辑
-  - 时间轴/单帧/回到开头等播放逻辑
-
-依赖：
-  pip install PySide6
-
-还需要安装 FFmpeg，并确认终端可以运行：
-  ffmpeg -version
-  ffprobe -version
-
-macOS 可用：
-  brew install ffmpeg
-
-运行：
-  python alpha_splitter_gui_v2.py
+Requires PySide6 plus FFmpeg and FFprobe on the system PATH.
 """
 
 import json
@@ -307,8 +269,8 @@ def build_inherited_stream_color_flags(stream: dict) -> tuple[list[str], dict]:
     从输入视频流中读取并显式继承色彩数学参数。
 
     注意：
-      - -map_metadata 0 只能复制文件级元数据，不等同于复制 stream 级色彩参数。
-      - 这里只在 ffprobe 检测到有效且适合作为输出标签的值时添加对应参数。
+      - 全局容器元数据会清除，不作为色彩参数继承手段。
+      - 这里只在 ffprobe 检测到有效且适合作为输出标签的 stream 值时添加对应参数。
       - 检测不到就不写任何该项色彩标签，避免凭空猜测。
       - RGB/GBR 是输入像素颜色模型，不适合直接写成 YUV 输出的 -colorspace。
     """
@@ -319,7 +281,9 @@ def build_inherited_stream_color_flags(stream: dict) -> tuple[list[str], dict]:
         ("color_range", "-color_range"),
     ]
 
-    flags = ["-map_metadata", "0"]
+    # Preserve stream-level color interpretation explicitly, but do not copy
+    # container metadata such as a title, author, or location to shared output.
+    flags = ["-map_metadata", "-1"]
     detected = {}
 
     for probe_key, ffmpeg_arg in mapping:
@@ -334,13 +298,13 @@ def build_inherited_stream_color_flags(stream: dict) -> tuple[list[str], dict]:
 def format_applied_color_flags(flags: list[str]) -> str:
     """格式化实际传给 FFmpeg 的色彩/元数据参数。"""
     lines = ["[实际传给 FFmpeg 的色彩参数]"]
-    color_flags = [flag for flag in flags if flag != "-map_metadata"]
-    if len(flags) == 2 and flags == ["-map_metadata", "0"]:
-        lines.append("仅传递 -map_metadata 0；没有写入 stream 级色彩标签。")
+    color_flags = [flag for flag in flags if flag not in {"-map_metadata", "-1"}]
+    if len(flags) == 2 and flags == ["-map_metadata", "-1"]:
+        lines.append("已清除输入文件的全局元数据；没有写入 stream 级色彩标签。")
     elif color_flags:
         lines.append(" ".join(shlex.quote(x) for x in flags))
     else:
-        lines.append("没有写入 stream 级色彩标签。")
+        lines.append("已清除输入文件的全局元数据；没有写入 stream 级色彩标签。")
     lines.append("说明：color_space 为 gbr/rgb 时不会直接写入 -colorspace，避免 ProRes/H.264/H.265 等 YUV 输出编码器报错。")
     return "\n".join(lines)
 
